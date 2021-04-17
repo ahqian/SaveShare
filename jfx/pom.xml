@@ -54,7 +54,7 @@
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000</option>
                             </options>
-                            <mainClass>com.alexhqi.jfx.App</mainClass>
+                            <mainClass>com.alexhqi.jfx.Launcher</mainClass>
                         </configuration>
                     </execution>
                     <execution>
@@ -64,16 +64,16 @@
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
                             </options>
-                            <mainClass>com.alexhqi.jfx.App</mainClass>
+                            <mainClass>com.alexhqi.jfx.Launcher</mainClass>
                         </configuration>
                     </execution>
                     <execution>
                         <id>main</id>
                         <configuration>
                             <release>11</release>
-                            <jlinkImageName>savesharejfx</jlinkImageName>
+                            <jlinkImageName>savesharejre</jlinkImageName>
                             <launcher>launcher</launcher>
-                            <mainClass>com.alexhqi.jfx.App</mainClass>
+                            <mainClass>com.alexhqi.jfx.Launcher</mainClass>
                         </configuration>
                     </execution>
                 </executions>
