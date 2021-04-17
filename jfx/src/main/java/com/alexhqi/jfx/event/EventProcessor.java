@@ -1,4 +1,4 @@
-package com.alexhqi.event;
+package com.alexhqi.jfx.event;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;

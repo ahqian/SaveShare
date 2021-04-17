@@ -1,7 +1,8 @@
-package com.alexhqi;
+package com.alexhqi.jfx;
+
+import javafx.fxml.FXML;
 
 import java.io.IOException;
-import javafx.fxml.FXML;
 
 public class SecondaryController {
 

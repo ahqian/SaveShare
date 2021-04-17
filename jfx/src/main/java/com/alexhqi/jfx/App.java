@@ -1,12 +1,12 @@
-package com.alexhqi;
+package com.alexhqi.jfx;
 
-import com.alexhqi.dependency.ScuffedServiceContext;
-import com.alexhqi.event.EventBus;
-import com.alexhqi.event.EventHandlerFactory;
-import com.alexhqi.event.EventProcessor;
-import com.alexhqi.event.QueuedEventBus;
-import com.alexhqi.event.handler.AppWorkingHandler;
-import com.alexhqi.event.handler.StartGameHandler;
+import com.alexhqi.jfx.dependency.ScuffedServiceContext;
+import com.alexhqi.jfx.event.EventBus;
+import com.alexhqi.jfx.event.EventHandlerFactory;
+import com.alexhqi.jfx.event.EventProcessor;
+import com.alexhqi.jfx.event.QueuedEventBus;
+import com.alexhqi.jfx.event.handler.AppWorkingHandler;
+import com.alexhqi.jfx.event.handler.StartGameHandler;
 import com.alexhqi.saveapp.core.GameManager;
 import com.alexhqi.saveapp.service.SaveServiceFactory;
 import javafx.application.Application;

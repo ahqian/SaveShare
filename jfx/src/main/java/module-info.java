@@ -3,6 +3,6 @@ module SaveShare.jfx {
     requires javafx.fxml;
     requires SaveShare.saveapp;
 
-    opens com.alexhqi to javafx.fxml;
-    exports com.alexhqi;
+    opens com.alexhqi.jfx to javafx.fxml;
+    exports com.alexhqi.jfx;
 }

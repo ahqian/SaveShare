@@ -1,4 +1,4 @@
-package com.alexhqi.dependency;
+package com.alexhqi.jfx.dependency;
 
 import java.util.HashMap;
 import java.util.Map;

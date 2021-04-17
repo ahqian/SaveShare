@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="mainBox" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexhqi.MainController">
+<VBox fx:id="mainBox" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexhqi.jfx.MainController">
    <children>
       <HBox>
          <children>
@@ -21,7 +21,6 @@
       <ButtonBar prefHeight="40.0" prefWidth="200.0">
         <buttons>
           <Button fx:id="launchButton" mnemonicParsing="false" onAction="#launchSelectedGame" text="Launch" />
-            <Button mnemonicParsing="false" onAction="#switchToSecondary" text="Button" />
         </buttons>
       </ButtonBar>
    </children>

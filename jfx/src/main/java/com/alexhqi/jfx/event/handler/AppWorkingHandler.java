@@ -1,6 +1,6 @@
-package com.alexhqi.event.handler;
+package com.alexhqi.jfx.event.handler;
 
-import com.alexhqi.event.type.AppWorkingEvent;
+import com.alexhqi.jfx.event.type.AppWorkingEvent;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.Pane;

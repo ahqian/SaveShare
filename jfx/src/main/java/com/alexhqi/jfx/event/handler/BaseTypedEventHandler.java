@@ -1,7 +1,7 @@
-package com.alexhqi.event.handler;
+package com.alexhqi.jfx.event.handler;
 
-import com.alexhqi.event.Event;
-import com.alexhqi.event.EventHandler;
+import com.alexhqi.jfx.event.Event;
+import com.alexhqi.jfx.event.EventHandler;
 
 public abstract class BaseTypedEventHandler<T extends Event> implements EventHandler {
 

@@ -1,4 +1,4 @@
-package com.alexhqi.event.type;
+package com.alexhqi.jfx.event.type;
 
 import javafx.scene.layout.Pane;
 

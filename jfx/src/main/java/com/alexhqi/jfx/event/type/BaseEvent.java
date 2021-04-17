@@ -1,6 +1,6 @@
-package com.alexhqi.event.type;
+package com.alexhqi.jfx.event.type;
 
-import com.alexhqi.event.Event;
+import com.alexhqi.jfx.event.Event;
 
 import java.util.UUID;
 

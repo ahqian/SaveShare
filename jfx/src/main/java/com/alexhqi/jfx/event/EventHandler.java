@@ -1,4 +1,4 @@
-package com.alexhqi.event;
+package com.alexhqi.jfx.event;
 
 public interface EventHandler {
 

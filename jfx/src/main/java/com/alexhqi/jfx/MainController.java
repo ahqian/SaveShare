@@ -1,10 +1,10 @@
-package com.alexhqi;
+package com.alexhqi.jfx;
 
-import com.alexhqi.dependency.ScuffedServiceContext;
-import com.alexhqi.event.EventBus;
-import com.alexhqi.event.EventProcessor;
-import com.alexhqi.event.type.AppWorkingEvent;
-import com.alexhqi.event.type.StartGameEvent;
+import com.alexhqi.jfx.dependency.ScuffedServiceContext;
+import com.alexhqi.jfx.event.EventBus;
+import com.alexhqi.jfx.event.EventProcessor;
+import com.alexhqi.jfx.event.type.AppWorkingEvent;
+import com.alexhqi.jfx.event.type.StartGameEvent;
 import com.alexhqi.saveapp.core.Game;
 import com.alexhqi.saveapp.core.GameManager;
 import javafx.fxml.FXML;
@@ -35,9 +35,6 @@ public class MainController implements Initializable {
 
     @FXML
     private void switchToSecondary() throws IOException {
-        eventBus.registerEvent(new AppWorkingEvent("task", AppWorkingEvent.Status.WORKING, mainBox));
-//        mainBox.setDisable(true);
-//        mainBox.getChildren();
 //        App.setRoot("secondary");
     }
 
@@ -73,12 +70,10 @@ public class MainController implements Initializable {
     }
 
     private String getGameInfoText(Game game) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Name: ").append(game.getName()).append("\n\n");
-        sb.append("Executable: ").append(game.getExecutable().getAbsolutePath()).append("\n");
-        sb.append("Save Directory: ").append(game.getSaveConfiguration().getGameSaveDirectory().getAbsolutePath()).append("\n\n");
-        sb.append("Save Service ID: ").append(game.getSaveConfiguration().getSaveServiceId()).append("\n");
-        sb.append("Save Service Reference: ").append(game.getSaveConfiguration().getRemoteSaveUuid()).append("\n");
-        return sb.toString();
+        return "Name: " + game.getName() + "\n\n" +
+                "Executable: " + game.getExecutable().getAbsolutePath() + "\n" +
+                "Save Directory: " + game.getSaveConfiguration().getGameSaveDirectory().getAbsolutePath() + "\n\n" +
+                "Save Service ID: " + game.getSaveConfiguration().getSaveServiceId() + "\n" +
+                "Save Service Reference: " + game.getSaveConfiguration().getRemoteSaveUuid() + "\n";
     }
 }

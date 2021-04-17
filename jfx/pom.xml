@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <release>11</release>
                 </configuration>
@@ -47,14 +47,6 @@
                 <version>0.0.5</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running -->
-                        <!-- Usage: mvn clean javafx:run -->
-                        <id>default-cli</id>
-                        <configuration>
-                            <mainClass>com.alexhqi.App</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <!-- Configuration for manual attach debugging -->
                         <!-- Usage: mvn clean javafx:run@debug -->
                         <id>debug</id>
@@ -62,7 +54,7 @@
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:8000</option>
                             </options>
-                            <mainClass>com.alexhqi.App</mainClass>
+                            <mainClass>com.alexhqi.jfx.App</mainClass>
                         </configuration>
                     </execution>
                     <execution>
@@ -72,7 +64,16 @@
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
                             </options>
-                            <mainClass>com.alexhqi.App</mainClass>
+                            <mainClass>com.alexhqi.jfx.App</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>main</id>
+                        <configuration>
+                            <release>11</release>
+                            <jlinkImageName>savesharejfx</jlinkImageName>
+                            <launcher>launcher</launcher>
+                            <mainClass>com.alexhqi.jfx.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>

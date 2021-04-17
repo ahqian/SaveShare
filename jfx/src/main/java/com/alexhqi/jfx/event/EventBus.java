@@ -1,4 +1,4 @@
-package com.alexhqi.event;
+package com.alexhqi.jfx.event;
 
 /**
  * Provides an event bus interface for the registration of new events and the retrieval of registered events.

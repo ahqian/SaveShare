@@ -1,4 +1,4 @@
-package com.alexhqi.event.type;
+package com.alexhqi.jfx.event.type;
 
 import com.alexhqi.saveapp.core.Game;
 

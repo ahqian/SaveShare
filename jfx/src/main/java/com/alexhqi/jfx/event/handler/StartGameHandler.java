@@ -1,6 +1,6 @@
-package com.alexhqi.event.handler;
+package com.alexhqi.jfx.event.handler;
 
-import com.alexhqi.event.type.StartGameEvent;
+import com.alexhqi.jfx.event.type.StartGameEvent;
 import com.alexhqi.saveapp.core.GameManager;
 
 public class StartGameHandler extends BaseTypedEventHandler<StartGameEvent> {
