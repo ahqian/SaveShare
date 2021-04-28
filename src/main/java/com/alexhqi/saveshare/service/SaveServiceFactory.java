@@ -2,6 +2,9 @@ package com.alexhqi.saveshare.service;
 
 import com.alexhqi.saveshare.service.git.GitSaveService;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class SaveServiceFactory {
 
     private static final GitSaveService gitSaveService = new GitSaveService();
@@ -25,5 +28,9 @@ public abstract class SaveServiceFactory {
             default:
                 throw new IllegalArgumentException("Unknown service id: " + id);
         }
+    }
+
+    public static List<RemoteSaveService> getServices() {
+        return Collections.singletonList(gitSaveService);
     }
 }

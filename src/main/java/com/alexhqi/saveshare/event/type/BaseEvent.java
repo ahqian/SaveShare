@@ -10,7 +10,7 @@ public abstract class BaseEvent implements Event {
     private final String type;
     private final UUID uuid;
 
-    protected BaseEvent(String type) {
+    public BaseEvent(String type) {
         this.type = type;
         this.uuid = UUID.randomUUID();
     }

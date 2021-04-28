@@ -1,6 +1,7 @@
 package com.alexhqi.saveshare.service;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,8 +13,10 @@ import java.util.UUID;
  */
 public interface RemoteSaveService {
 
+    String getId();
     boolean initialize() throws Exception;
     File getSaveWithId(UUID remoteSaveUuid);
     void updateSaveWithId(UUID remoteSaveUuid);
+    List<UUID> getAllSaves();
 
 }

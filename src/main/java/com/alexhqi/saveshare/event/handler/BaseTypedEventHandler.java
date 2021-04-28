@@ -5,6 +5,7 @@ import com.alexhqi.saveshare.event.EventHandler;
 
 public abstract class BaseTypedEventHandler<T extends Event> implements EventHandler {
 
+    // this just seems kind of gross. But I'm not sure of an alternative right now.
     private final Class<T> eventClass;
 
     protected BaseTypedEventHandler(Class<T> eventClass) {

@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GitSaveService implements RemoteSaveService {
 
@@ -46,6 +47,11 @@ public class GitSaveService implements RemoteSaveService {
     }
 
     // todo break out the GitRepo specific methods into a separate GitRepoService
+
+    @Override
+    public String getId() {
+        return SERVICE_ID;
+    }
 
     @Override
     public boolean initialize() throws Exception {
@@ -259,6 +265,11 @@ public class GitSaveService implements RemoteSaveService {
         } else {
             LOGGER.warn("Attempted to update unknown save with id {}", remoteSaveUuid);
         }
+    }
+
+    @Override
+    public List<UUID> getAllSaves() {
+        return serviceConfiguration.getSaves().stream().map(GitSave::getUuid).collect(Collectors.toList());
     }
 
     public void uploadSaveFile(File save, GitRepo repo) throws GitAPIException, IOException {

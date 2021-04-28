@@ -1,25 +1,47 @@
 package com.alexhqi.saveshare;
 
+import com.alexhqi.saveshare.core.Game;
+import com.alexhqi.saveshare.core.GameManager;
+import com.alexhqi.saveshare.core.SaveConfiguration;
 import com.alexhqi.saveshare.dependency.ScuffedServiceContext;
 import com.alexhqi.saveshare.event.EventBus;
 import com.alexhqi.saveshare.event.EventProcessor;
 import com.alexhqi.saveshare.event.type.AppWorkingEvent;
 import com.alexhqi.saveshare.event.type.StartGameEvent;
-import com.alexhqi.saveshare.core.Game;
-import com.alexhqi.saveshare.core.GameManager;
+import com.alexhqi.saveshare.event.type.ValidateGameEvent;
+import com.alexhqi.saveshare.service.SaveServiceFactory;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class MainController implements Initializable {
+
+    @FXML
+    public TextField executableText;
+
+    @FXML
+    public TextField saveDirText;
+
+    @FXML
+    public ComboBox<String> saveServiceCombo;
+
+    @FXML
+    public ComboBox<UUID> referenceCombo;
+
+    @FXML
+    public TextFlow errorTextArea;
 
     @FXML
     private VBox mainBox;
@@ -30,12 +52,60 @@ public class MainController implements Initializable {
     @FXML
     private TextArea gameInfoPane;
 
+    @FXML
+    private TextField nameText;
+
     private GameManager gameManager;
     private EventBus eventBus;
 
     @FXML
     private void switchToSecondary() throws IOException {
 //        App.setRoot("secondary");
+    }
+
+    @FXML
+    private void onServiceSelected(ActionEvent event) {
+        // todo this whole service selection could be removed with better save reference management
+    }
+
+    @FXML
+    private void onAdd() {
+        Game game = new Game();
+        game.setName(nameText.getText());
+        game.setExecutable(new File(executableText.getText()));
+        SaveConfiguration saveConfiguration = new SaveConfiguration();
+        saveConfiguration.setSaveServiceId(saveServiceCombo.getValue());
+        saveConfiguration.setGameSaveDirectory(new File(saveDirText.getText()));
+        saveConfiguration.setRemoteSaveUuid(referenceCombo.getValue());
+        game.setSaveConfiguration(saveConfiguration);
+        eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.WORKING, mainBox));
+        eventBus.registerEvent(new ValidateGameEvent(validationResult -> {
+            if (validationResult.isSuccess()) {
+                try {
+                    gameManager.addGame(game);
+                    // have to request ui thread to run later because events are handled in non-ui worker threads
+                    Platform.runLater(() -> {
+                        gameListView.getItems().add(game);
+                    });
+                } catch (IOException e) {
+                    setErrorText("Failed to persist new Game configuration. Exception: " + e.getMessage());
+                }
+            } else {
+                setErrorText(validationResult.getReason());
+            }
+            return null;
+        }, game));
+        eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.COMPLETE, mainBox));
+    }
+
+    private synchronized void setErrorText(String s) {
+        // this is usually called from a separate worker thread
+        Platform.runLater(() -> {
+            Text text = new Text(s);
+            text.setFill(Color.RED);
+            errorTextArea.getChildren().clear();
+            errorTextArea.getChildren().add(text);
+        });
     }
 
     @FXML
@@ -53,6 +123,12 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         gameManager = ScuffedServiceContext.getInstance(GameManager.class);
         gameManager.getGames().forEach(game -> gameListView.getItems().add(game));
+
+        SaveServiceFactory.getServices().forEach(service -> {
+            saveServiceCombo.getItems().add(service.getId());
+            referenceCombo.getItems().addAll(service.getAllSaves());
+        });
+
         gameListView.setCellFactory((param -> new ListCell<>() {
             @Override
             protected void updateItem(Game item, boolean empty) {
@@ -65,7 +141,18 @@ public class MainController implements Initializable {
             }
         }));
         gameListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        gameListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> gameInfoPane.setText(getGameInfoText(newValue)));
+        gameListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            gameInfoPane.setText(getGameInfoText(newValue));
+            nameText.setText(newValue.getName());
+            executableText.setText(newValue.getExecutable().getAbsolutePath());
+            saveDirText.setText(newValue.getSaveConfiguration().getGameSaveDirectory().getAbsolutePath());
+            saveServiceCombo.getSelectionModel().clearAndSelect(
+                    saveServiceCombo.getItems().indexOf(newValue.getSaveConfiguration().getSaveServiceId())
+            );
+            referenceCombo.getSelectionModel().clearAndSelect(
+                    referenceCombo.getItems().indexOf(newValue.getSaveConfiguration().getRemoteSaveUuid())
+            );
+        });
         eventBus = EventProcessor.getInstance().getBus();
     }
 

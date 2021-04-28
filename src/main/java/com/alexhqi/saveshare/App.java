@@ -8,6 +8,7 @@ import com.alexhqi.saveshare.event.QueuedEventBus;
 import com.alexhqi.saveshare.event.handler.AppWorkingHandler;
 import com.alexhqi.saveshare.event.handler.StartGameHandler;
 import com.alexhqi.saveshare.core.GameManager;
+import com.alexhqi.saveshare.event.handler.ValidateGameHandler;
 import com.alexhqi.saveshare.service.SaveServiceFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,7 +28,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("primary"));
         stage.setScene(scene);
         stage.setOnCloseRequest((event) -> {
             EventProcessor.getInstance().finishProcessing();
@@ -58,6 +59,7 @@ public class App extends Application {
 
             EventHandlerFactory.registerHandler(new AppWorkingHandler());
             EventHandlerFactory.registerHandler(new StartGameHandler(ScuffedServiceContext.getInstance(GameManager.class)));
+            EventHandlerFactory.registerHandler(new ValidateGameHandler());
             launch();
         } catch (IOException e) {
             // should log

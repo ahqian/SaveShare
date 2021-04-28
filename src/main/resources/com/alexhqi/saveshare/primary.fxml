@@ -3,24 +3,113 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox fx:id="mainBox" alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexhqi.saveshare.MainController">
+<VBox fx:id="mainBox" alignment="CENTER" maxHeight="480.0" maxWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alexhqi.saveshare.MainController">
    <children>
-      <HBox>
-         <children>
-            <Label alignment="TOP_CENTER" text="SaveShare" />
-            <HBox HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <SplitPane dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0">
-         <items>
-            <ListView fx:id="gameListView" prefHeight="200.0" prefWidth="200.0" />
-            <TextArea fx:id="gameInfoPane" prefHeight="200.0" prefWidth="200.0" />
-         </items>
-      </SplitPane>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0">
+      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Games">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0">
+                     <children>
+                        <SplitPane dividerPositions="0.3" maxHeight="358.0" prefHeight="325.0" prefWidth="598.0">
+                           <items>
+                              <ListView fx:id="gameListView" maxWidth="200.0" prefWidth="200.0" />
+                              <VBox prefHeight="316.0" prefWidth="414.0">
+                                 <children>
+                                    <HBox maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label text="Name">
+                                             <HBox.margin>
+                                                <Insets bottom="3.0" left="5.0" top="3.0" />
+                                             </HBox.margin></Label>
+                                          <Pane HBox.hgrow="ALWAYS" />
+                                          <TextField fx:id="nameText" prefWidth="300.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="191.0" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label text="Executable">
+                                             <HBox.margin>
+                                                <Insets bottom="3.0" left="5.0" top="3.0" />
+                                             </HBox.margin></Label>
+                                          <Pane HBox.hgrow="ALWAYS" />
+                                          <TextField fx:id="executableText" prefWidth="300.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="216.0" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label text="Save Directory">
+                                             <HBox.margin>
+                                                <Insets bottom="3.0" left="5.0" top="3.0" />
+                                             </HBox.margin></Label>
+                                          <Pane HBox.hgrow="ALWAYS" />
+                                          <TextField fx:id="saveDirText" prefWidth="300.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="241.0" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label text="Save Service">
+                                             <HBox.margin>
+                                                <Insets bottom="3.0" left="5.0" top="3.0" />
+                                             </HBox.margin></Label>
+                                          <Pane HBox.hgrow="ALWAYS" />
+                                          <ComboBox fx:id="saveServiceCombo" onAction="#onServiceSelected" prefWidth="300.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="266.0" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <Label text="Save Reference">
+                                             <HBox.margin>
+                                                <Insets bottom="3.0" left="5.0" top="3.0" />
+                                             </HBox.margin></Label>
+                                          <Pane HBox.hgrow="ALWAYS" />
+                                          <ComboBox fx:id="referenceCombo" prefWidth="300.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" top="2.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <TextArea fx:id="gameInfoPane" maxWidth="1.7976931348623157E308">
+                                       <VBox.margin>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </VBox.margin></TextArea>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="2.0" top="2.0" />
+                                 </padding>
+                              </VBox>
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Sources">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <TextFlow fx:id="errorTextArea" />
+      <ButtonBar prefHeight="40.0">
         <buttons>
-          <Button fx:id="launchButton" mnemonicParsing="false" onAction="#launchSelectedGame" text="Launch" />
+            <Button mnemonicParsing="false" onAction="#onAdd" text="Add" />
+          <Button mnemonicParsing="false" onAction="#launchSelectedGame" text="Launch" />
         </buttons>
       </ButtonBar>
    </children>
