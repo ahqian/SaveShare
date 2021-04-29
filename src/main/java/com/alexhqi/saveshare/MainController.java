@@ -46,18 +46,10 @@ public class MainController implements Initializable {
     public ComboBox<String> sourceServiceCombo;
     // todo this should be a generic source interface
     public ListView<GitRepo> sourceListView;
-
-    @FXML
-    private VBox mainBox;
-
-    @FXML
-    private ListView<Game> gameListView;
-
-    @FXML
-    private TextArea gameInfoPane;
-
-    @FXML
-    private TextField nameText;
+    public VBox mainBox;
+    public ListView<Game> gameListView;
+    public TextArea gameInfoPane;
+    public TextField nameText;
 
     private GameManager gameManager;
     private EventBus eventBus;
