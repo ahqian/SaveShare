@@ -2,6 +2,7 @@ package com.alexhqi.saveshare;
 
 import com.alexhqi.saveshare.core.Game;
 import com.alexhqi.saveshare.core.GameManager;
+import com.alexhqi.saveshare.core.Save;
 import com.alexhqi.saveshare.core.SaveConfiguration;
 import com.alexhqi.saveshare.dependency.ScuffedServiceContext;
 import com.alexhqi.saveshare.event.Event;
@@ -29,25 +30,16 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
 
-    @FXML
     public TextField executableText;
-
-    @FXML
     public TextField saveDirText;
-
-    @FXML
     public ComboBox<String> saveServiceCombo;
-
-    @FXML
     public ComboBox<UUID> referenceCombo;
-
-    @FXML
     public TextFlow errorTextArea;
-
-    public VBox gitSourceBox;
+    public VBox sourceGitContainer;
     public TextField gitSourceNameTextField;
     public TextField gitSourceUriTextField;
     public TextField gitSourceTokenTextField;
@@ -76,7 +68,10 @@ public class MainController implements Initializable {
         try {
             RemoteSaveService service = SaveServiceFactory.getService(saveServiceCombo.getValue());
             referenceCombo.getItems().clear();
-            referenceCombo.getItems().addAll(service.getAllSaves());
+            referenceCombo.getItems().addAll(service.getAllSaves().stream()
+                    .map(Save::getReference)
+                    .collect(Collectors.toList())
+            );
         } catch (IllegalArgumentException e) {
             setErrorText("Could not find internal Remote Save Service with id: "+ saveServiceCombo.getValue());
         }
@@ -226,8 +221,8 @@ public class MainController implements Initializable {
     @FXML
     private void onSourceServiceSelected() {
         // will eventually have to also hide other source forms
-        gitSourceBox.setVisible(GitSaveService.SERVICE_ID.equals(sourceServiceCombo.getValue()));
-        gitSourceBox.setDisable(!GitSaveService.SERVICE_ID.equals(sourceServiceCombo.getValue()));
+        sourceGitContainer.setVisible(GitSaveService.SERVICE_ID.equals(sourceServiceCombo.getValue()));
+        sourceGitContainer.setDisable(!GitSaveService.SERVICE_ID.equals(sourceServiceCombo.getValue()));
     }
 
     @FXML
@@ -293,9 +288,20 @@ public class MainController implements Initializable {
         }
         return null;
     }
+    /**
+     * END SOURCE TAB
+     */
 
 
     /**
-     * END SOURCE TAB
+     * SAVES TAB
+     */
+    // this naming scheme hurts me
+    @FXML
+    private void onSaveTabServiceSelected() {
+
+    }
+    /**
+     * END SAVES TAB
      */
 }

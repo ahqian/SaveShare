@@ -6,7 +6,6 @@ import java.util.Objects;
 public class Game {
 
     private String name = "";
-
     private File executable;
     private SaveConfiguration saveConfiguration;
 

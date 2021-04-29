@@ -1,5 +1,6 @@
 package com.alexhqi.saveshare.service.git;
 
+import com.alexhqi.saveshare.core.Save;
 import com.alexhqi.saveshare.service.RemoteSaveService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -277,8 +278,10 @@ public class GitSaveService implements RemoteSaveService {
     }
 
     @Override
-    public List<UUID> getAllSaves() {
-        return serviceConfiguration.getSaves().stream().map(GitSave::getUuid).collect(Collectors.toList());
+    public List<Save> getAllSaves() {
+        return serviceConfiguration.getSaves().stream()
+                .map((gitsave -> new Save(gitsave.getUuid(), SERVICE_ID)))
+                .collect(Collectors.toList());
     }
 
     public void uploadSaveFile(File save, GitRepo repo) throws GitAPIException, IOException {

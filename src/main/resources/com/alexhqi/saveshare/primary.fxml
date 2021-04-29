@@ -150,7 +150,7 @@
                                                 <Insets bottom="10.0" top="10.0" />
                                              </VBox.margin>
                                           </Separator>
-                                          <VBox fx:id="gitSourceBox" disable="true" visible="false">
+                                          <VBox fx:id="sourceGitContainer" disable="true" visible="false">
                                              <children>
                                                 <HBox maxWidth="1.7976931348623157E308">
                                                    <children>
@@ -221,7 +221,7 @@
                           <children>
                              <SplitPane dividerPositions="0.5" prefWidth="690.0">
                                 <items>
-                                   <ListView maxWidth="200.0" minWidth="100.0" prefWidth="200.0" />
+                                   <ListView fx:id="saveListView" maxWidth="200.0" minWidth="100.0" prefWidth="200.0" />
                                    <VBox>
                                       <children>
                                          <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
@@ -232,13 +232,65 @@
                                                   </HBox.margin>
                                                </Label>
                                                <Pane HBox.hgrow="ALWAYS" />
-                                               <ComboBox prefWidth="300.0" />
+                                               <ComboBox onAction="#onSaveTabServiceSelected" prefWidth="300.0" />
                                             </children>
                                             <padding>
                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
                                          </HBox>
-                                         <VBox />
+                                          <HBox layoutX="10.0" layoutY="20.0" maxWidth="1.7976931348623157E308">
+                                             <children>
+                                                <Label text="Reference">
+                                                   <HBox.margin>
+                                                      <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <TextField fx:id="savesReferenceText" editable="false" prefWidth="300.0" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                             </padding>
+                                          </HBox>
+                                          <Separator prefWidth="200.0">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </Separator>
+                                         <VBox fx:id="savesGitContaner">
+                                             <children>
+                                                <HBox maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Label text="Git Repo">
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Pane HBox.hgrow="ALWAYS" />
+                                                      <ComboBox fx:id="savesRepoCombo" prefWidth="300.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Label text="Name">
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Pane HBox.hgrow="ALWAYS" />
+                                                      <TextField prefWidth="300.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children></VBox>
                                       </children>
                                    </VBox>
                                 </items>
