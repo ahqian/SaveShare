@@ -59,25 +59,13 @@ public class MainController implements Initializable {
     private EventBus eventBus;
 
     @FXML
-    private void switchToSecondary() throws IOException {
-//        App.setRoot("secondary");
-    }
-
-    @FXML
     private void onServiceSelected(ActionEvent event) {
         // todo this whole service selection could be removed with better save reference management
     }
 
     @FXML
-    private void onAdd() {
-        Game game = new Game();
-        game.setName(nameText.getText());
-        game.setExecutable(new File(executableText.getText()));
-        SaveConfiguration saveConfiguration = new SaveConfiguration();
-        saveConfiguration.setSaveServiceId(saveServiceCombo.getValue());
-        saveConfiguration.setGameSaveDirectory(new File(saveDirText.getText()));
-        saveConfiguration.setRemoteSaveUuid(referenceCombo.getValue());
-        game.setSaveConfiguration(saveConfiguration);
+    private void onAddGame() {
+        Game game = getGameFromInput();
         eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.WORKING, mainBox));
         eventBus.registerEvent(new ValidateGameEvent(validationResult -> {
             if (validationResult.isSuccess()) {
@@ -98,7 +86,19 @@ public class MainController implements Initializable {
         eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.COMPLETE, mainBox));
     }
 
-    private synchronized void setErrorText(String s) {
+    private Game getGameFromInput() {
+        Game game = new Game();
+        game.setName(nameText.getText());
+        game.setExecutable(new File(executableText.getText()));
+        SaveConfiguration saveConfiguration = new SaveConfiguration();
+        saveConfiguration.setSaveServiceId(saveServiceCombo.getValue());
+        saveConfiguration.setGameSaveDirectory(new File(saveDirText.getText()));
+        saveConfiguration.setRemoteSaveUuid(referenceCombo.getValue());
+        game.setSaveConfiguration(saveConfiguration);
+        return game;
+    }
+
+    private void setErrorText(String s) {
         // this is usually called from a separate worker thread
         Platform.runLater(() -> {
             Text text = new Text(s);
@@ -142,6 +142,7 @@ public class MainController implements Initializable {
         }));
         gameListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         gameListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // todo convert gameInfoPane into logging output window
             gameInfoPane.setText(getGameInfoText(newValue));
             nameText.setText(newValue.getName());
             executableText.setText(newValue.getExecutable().getAbsolutePath());
