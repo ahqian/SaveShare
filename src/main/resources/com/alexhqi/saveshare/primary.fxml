@@ -201,7 +201,8 @@
                               </SplitPane>
                               <ButtonBar>
                                  <buttons>
-                                    <Button mnemonicParsing="false" onAction="#onAddSource" text="Add" />
+                                    <Button mnemonicParsing="false" onAction="#onDeleteSource" text="Delete" />
+                                    <Button layoutX="625.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAddSource" text="Add" />
                                  </buttons>
                                  <VBox.margin>
                                     <Insets bottom="5.0" top="5.0" />

@@ -4,12 +4,10 @@ import com.alexhqi.saveshare.core.Game;
 import com.alexhqi.saveshare.core.GameManager;
 import com.alexhqi.saveshare.core.SaveConfiguration;
 import com.alexhqi.saveshare.dependency.ScuffedServiceContext;
+import com.alexhqi.saveshare.event.Event;
 import com.alexhqi.saveshare.event.EventBus;
 import com.alexhqi.saveshare.event.EventProcessor;
-import com.alexhqi.saveshare.event.type.AppWorkingEvent;
-import com.alexhqi.saveshare.event.type.StartGameEvent;
-import com.alexhqi.saveshare.event.type.ValidateGameEvent;
-import com.alexhqi.saveshare.event.type.ValidateGitRepoEvent;
+import com.alexhqi.saveshare.event.type.*;
 import com.alexhqi.saveshare.service.RemoteSaveService;
 import com.alexhqi.saveshare.service.SaveServiceFactory;
 import com.alexhqi.saveshare.service.git.GitRepo;
@@ -87,8 +85,7 @@ public class MainController implements Initializable {
     @FXML
     private void onAddGame() {
         Game game = getGameFromInput();
-        eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.WORKING, mainBox));
-        eventBus.registerEvent(new ValidateGameEvent(validationResult -> {
+        fireWorkEvent("Validate Game", new ValidateGameEvent(validationResult -> {
             if (validationResult.isSuccess()) {
                 try {
                     // this is running on task thread - not ui thread
@@ -106,7 +103,6 @@ public class MainController implements Initializable {
             }
             return null;
         }, game));
-        eventBus.registerEvent(new AppWorkingEvent("Validate Game", AppWorkingEvent.Status.COMPLETE, mainBox));
     }
 
     private Game getGameFromInput() {
@@ -136,9 +132,7 @@ public class MainController implements Initializable {
         Game game = gameListView.getSelectionModel().getSelectedItem();
         if (game != null) {
             // these events are processed sequentially, using the same bus
-            eventBus.registerEvent(new AppWorkingEvent("Play Game", AppWorkingEvent.Status.WORKING, mainBox));
-            eventBus.registerEvent(new StartGameEvent(game));
-            eventBus.registerEvent(new AppWorkingEvent("Play Game", AppWorkingEvent.Status.COMPLETE, mainBox));
+            fireWorkEvent("Play Game", new StartGameEvent(game));
         }
     }
 
@@ -204,12 +198,18 @@ public class MainController implements Initializable {
     }
 
     private void showGitSourceInfo(GitRepo repo) {
-        // will trigger onSourceServiceSelected
-        sourceServiceCombo.getSelectionModel().select(GitSaveService.SERVICE_ID);
+        if (repo != null) {
+            // will trigger onSourceServiceSelected
+            sourceServiceCombo.getSelectionModel().select(GitSaveService.SERVICE_ID);
 
-        gitSourceNameTextField.setText(repo.getName());
-        gitSourceUriTextField.setText(repo.getRepoUri().toString());
-        gitSourceTokenTextField.setText(repo.getToken());
+            gitSourceNameTextField.setText(repo.getName());
+            gitSourceUriTextField.setText(repo.getRepoUri().toString());
+            gitSourceTokenTextField.setText(repo.getToken());
+        } else {
+            gitSourceNameTextField.clear();
+            gitSourceUriTextField.clear();
+            gitSourceTokenTextField.clear();
+        }
     }
 
     private String getGameInfoText(Game game) {
@@ -236,8 +236,7 @@ public class MainController implements Initializable {
             // handle add git repo
             GitRepo repo = getRepoFromInput();
             if (repo != null) {
-                eventBus.registerEvent(new AppWorkingEvent("Add Source", AppWorkingEvent.Status.WORKING, mainBox));
-                eventBus.registerEvent(new ValidateGitRepoEvent(validationResult -> {
+                fireWorkEvent("Add Source", new ValidateGitRepoEvent(validationResult -> {
                     if (validationResult.isSuccess()) {
                         try {
                             GitSaveService gitSaveService = (GitSaveService) SaveServiceFactory.getService(GitSaveService.SERVICE_ID);
@@ -254,9 +253,32 @@ public class MainController implements Initializable {
                     }
                     return null;
                 }, repo));
-                eventBus.registerEvent(new AppWorkingEvent("Add Source", AppWorkingEvent.Status.COMPLETE, mainBox));
             }
         }
+    }
+
+    @FXML
+    private void onDeleteSource() {
+        GitRepo repo = sourceListView.getSelectionModel().getSelectedItem();
+        if (repo != null) {
+            fireWorkEvent("Delete Source", new DeleteSourceEvent(successResult -> {
+                if (successResult.isSuccess()) {
+                    Platform.runLater(() -> {
+                        sourceListView.getItems().remove(repo);
+                        sourceListView.getSelectionModel().select(-1);
+                    });
+                } else {
+                    setErrorText(successResult.getReason());
+                }
+                return null;
+            }, repo));
+        }
+    }
+
+    private void fireWorkEvent(String taskCode, Event event) {
+        eventBus.registerEvent(new AppWorkingEvent(taskCode, AppWorkingEvent.Status.WORKING, mainBox));
+        eventBus.registerEvent(event);
+        eventBus.registerEvent(new AppWorkingEvent(taskCode, AppWorkingEvent.Status.COMPLETE, mainBox));
     }
 
     private GitRepo getRepoFromInput() {

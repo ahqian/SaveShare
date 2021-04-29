@@ -1,5 +1,7 @@
 package com.alexhqi.saveshare.validation;
 
+import com.alexhqi.saveshare.event.SuccessResult;
+
 public interface Validator<T> {
-    ValidationResult validate(T t);
+    SuccessResult validate(T t);
 }

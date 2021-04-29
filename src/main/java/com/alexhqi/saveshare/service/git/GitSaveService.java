@@ -169,12 +169,20 @@ public class GitSaveService implements RemoteSaveService {
         Optional<GitRepo> repoOptional = serviceConfiguration.getRepos().stream().filter(repo -> repo.getName().equals(name)).findFirst();
         if (repoOptional.isPresent()) {
             GitRepo repo = repoOptional.get();
-            serviceConfiguration.getRepos().remove(repo);
+            if (!serviceConfiguration.getRepos().remove(repo)) {
+                throw new RuntimeException("Failed to remove repo from GitSaveService configuration.");
+            }
+            // try to save ahead of time in case any file stuff goes wrong,
+            // at least the directory will be left alone
+            saveServiceConfigurationToFile();
+
+            gitMap.get(repo.getName()).close();
+            gitMap.remove(repo.getName());
             File repoDirectory = getRepoPath(repo).toFile();
             if (repoDirectory.exists()) {
+                // todo this seems to fail regularly on the .git files..
                 FileUtils.deleteDirectory(repoDirectory);
             }
-            saveServiceConfigurationToFile();
         }
     }
 
@@ -182,6 +190,7 @@ public class GitSaveService implements RemoteSaveService {
         Git git = gitMap.get(repoInfo.getName());
         return git.pull()
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(repoInfo.getToken(), ""))
+                .setRemoteBranchName("master")
                 .call();
     }
 

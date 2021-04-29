@@ -2,19 +2,19 @@ package com.alexhqi.saveshare.event.handler;
 
 import com.alexhqi.saveshare.event.type.ValidateGitRepoEvent;
 import com.alexhqi.saveshare.service.git.GitRepo;
-import com.alexhqi.saveshare.validation.ValidationResult;
+import com.alexhqi.saveshare.event.SuccessResult;
 
-public class ValidateGitRepoHandler extends CallbackHandler<ValidateGitRepoEvent, ValidationResult> {
+public class ValidateGitRepoHandler extends CallbackHandler<ValidateGitRepoEvent, SuccessResult> {
 
     public ValidateGitRepoHandler() {
         super(ValidateGitRepoEvent.class);
     }
 
     @Override
-    protected ValidationResult handleEventForResult(ValidateGitRepoEvent event) {
+    protected SuccessResult handleEventForResult(ValidateGitRepoEvent event) {
         GitRepo repo = event.getRepo();
         // todo.. validate repo exists at given location and token is valid
-        return new ValidationResult(true);
+        return new SuccessResult(true);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package com.alexhqi.saveshare.validation.game;
+package com.alexhqi.saveshare.validation.impl;
 
 import com.alexhqi.saveshare.core.Game;
 import com.alexhqi.saveshare.service.RemoteSaveService;
 import com.alexhqi.saveshare.service.SaveServiceFactory;
-import com.alexhqi.saveshare.validation.ValidationResult;
+import com.alexhqi.saveshare.event.SuccessResult;
 import com.alexhqi.saveshare.validation.Validator;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 public class GameValidator implements Validator<Game> {
 
     @Override
-    public ValidationResult validate(Game game) {
+    public SuccessResult validate(Game game) {
         StringJoiner problemBuilder = new StringJoiner("\n");
 
         // validate executable exists
@@ -38,6 +38,6 @@ public class GameValidator implements Validator<Game> {
             problemBuilder.add("No service could be found with id " + game.getSaveConfiguration().getSaveServiceId());
         }
 
-        return new ValidationResult(problemBuilder.length() == 0, problemBuilder.toString());
+        return new SuccessResult(problemBuilder.length() == 0, problemBuilder.toString());
     }
 }
