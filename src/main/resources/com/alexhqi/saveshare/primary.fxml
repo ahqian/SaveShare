@@ -123,9 +123,9 @@
                      <children>
                         <VBox prefHeight="442.0" prefWidth="690.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <SplitPane dividerPositions="0.5" prefWidth="690.0">
+                              <SplitPane dividerPositions="0.5">
                                 <items>
-                                    <ListView maxWidth="200.0" minWidth="100.0" prefWidth="200.0" />
+                                    <ListView fx:id="sourceListView" maxWidth="200.0" minWidth="100.0" prefWidth="200.0" />
                                     <VBox>
                                        <children>
                                           <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
@@ -136,17 +136,77 @@
                                                    </HBox.margin>
                                                 </Label>
                                                 <Pane HBox.hgrow="ALWAYS" />
-                                                <ComboBox prefWidth="300.0" />
+                                                <ComboBox fx:id="sourceServiceCombo" onAction="#onSourceServiceSelected" prefWidth="300.0" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                              </padding>
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
                                           </HBox>
-                                          <VBox />
+                                          <Separator prefWidth="200.0">
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </Separator>
+                                          <VBox fx:id="gitSourceBox" disable="true" visible="false">
+                                             <children>
+                                                <HBox maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Label text="Name">
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Pane HBox.hgrow="ALWAYS" />
+                                                      <TextField fx:id="gitSourceNameTextField" prefWidth="300.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Label text="Https URI">
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Pane HBox.hgrow="ALWAYS" />
+                                                      <TextField fx:id="gitSourceUriTextField" prefWidth="300.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox layoutX="10.0" layoutY="39.0" maxWidth="1.7976931348623157E308">
+                                                   <children>
+                                                      <Label text="Access Token">
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" left="5.0" right="3.0" top="3.0" />
+                                                         </HBox.margin>
+                                                      </Label>
+                                                      <Pane HBox.hgrow="ALWAYS" />
+                                                      <TextField fx:id="gitSourceTokenTextField" prefWidth="300.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children></VBox>
                                        </children>
                                     </VBox>
                                 </items>
                               </SplitPane>
+                              <ButtonBar>
+                                 <buttons>
+                                    <Button mnemonicParsing="false" onAction="#onAddSource" text="Add" />
+                                 </buttons>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </ButtonBar>
                            </children>
                         </VBox>
                      </children></AnchorPane>

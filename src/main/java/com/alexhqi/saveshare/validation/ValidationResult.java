@@ -5,6 +5,10 @@ public class ValidationResult {
     private final boolean success;
     private final String reason;
 
+    public ValidationResult(boolean success) {
+        this(success, "");
+    }
+
     public ValidationResult(boolean success, String reason) {
         this.success = success;
         this.reason = reason;
