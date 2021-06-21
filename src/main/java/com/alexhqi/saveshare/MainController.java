@@ -34,22 +34,34 @@ import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
 
+    public TextFlow errorTextArea;
+    public VBox mainBox;
+
+    // todo ideally all these tabs are broken out of this mega class
+    public ListView<Game> gameListView;
+    public TextArea gameInfoPane;
+    public TextField gameNameTestField;
     public TextField executableText;
     public TextField saveDirText;
-    public ComboBox<String> saveServiceCombo;
+    public ComboBox<String> gameListSaveServiceCombo;
     public ComboBox<UUID> referenceCombo;
-    public TextFlow errorTextArea;
+
+    public ListView<GitRepo> sourceListView;
+    public ComboBox<String> sourceServiceCombo;
+
     public VBox sourceGitContainer;
     public TextField gitSourceNameTextField;
     public TextField gitSourceUriTextField;
     public TextField gitSourceTokenTextField;
-    public ComboBox<String> sourceServiceCombo;
-    // todo this should be a generic source interface
-    public ListView<GitRepo> sourceListView;
-    public VBox mainBox;
-    public ListView<Game> gameListView;
-    public TextArea gameInfoPane;
-    public TextField nameText;
+
+    public ComboBox<String> savesListSaveServiceCombo;
+    public ListView<Save> saveListView;
+    public TextField savesReferenceText;
+
+    public VBox savesGitContainer;
+    public ComboBox<GitRepo> gitSaveRepoCombo;
+    public TextField gitSaveNameTextField;
+    public TextField gitSaveUploadTextField;
 
     private GameManager gameManager;
     private EventBus eventBus;
@@ -58,14 +70,14 @@ public class MainController implements Initializable {
     private void onServiceSelected(ActionEvent event) {
         // todo this whole service selection could be removed with better save reference management for cleaner ui
         try {
-            RemoteSaveService service = SaveServiceFactory.getService(saveServiceCombo.getValue());
+            RemoteSaveService service = SaveServiceFactory.getService(gameListSaveServiceCombo.getValue());
             referenceCombo.getItems().clear();
             referenceCombo.getItems().addAll(service.getAllSaves().stream()
                     .map(Save::getReference)
                     .collect(Collectors.toList())
             );
         } catch (IllegalArgumentException e) {
-            setErrorText("Could not find internal Remote Save Service with id: "+ saveServiceCombo.getValue());
+            setErrorText("Could not find internal Remote Save Service with id: "+ gameListSaveServiceCombo.getValue());
         }
     }
 
@@ -94,10 +106,10 @@ public class MainController implements Initializable {
 
     private Game getGameFromInput() {
         Game game = new Game();
-        game.setName(nameText.getText());
+        game.setName(gameNameTestField.getText());
         game.setExecutable(new File(executableText.getText()));
         SaveConfiguration saveConfiguration = new SaveConfiguration();
-        saveConfiguration.setSaveServiceId(saveServiceCombo.getValue());
+        saveConfiguration.setSaveServiceId(gameListSaveServiceCombo.getValue());
         saveConfiguration.setGameSaveDirectory(new File(saveDirText.getText()));
         saveConfiguration.setRemoteSaveUuid(referenceCombo.getValue());
         game.setSaveConfiguration(saveConfiguration);
@@ -130,7 +142,7 @@ public class MainController implements Initializable {
 
         // SAVE SERVICE INITIALIZATION
         SaveServiceFactory.getServices().forEach(service -> {
-            saveServiceCombo.getItems().add(service.getId());
+            gameListSaveServiceCombo.getItems().add(service.getId());
             sourceServiceCombo.getItems().add(service.getId());
         });
 
@@ -150,11 +162,11 @@ public class MainController implements Initializable {
         gameListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // todo convert gameInfoPane into logging output window
             gameInfoPane.setText(getGameInfoText(newValue));
-            nameText.setText(newValue.getName());
+            gameNameTestField.setText(newValue.getName());
             executableText.setText(newValue.getExecutable().getAbsolutePath());
             saveDirText.setText(newValue.getSaveConfiguration().getGameSaveDirectory().getAbsolutePath());
-            saveServiceCombo.getSelectionModel().clearAndSelect(
-                    saveServiceCombo.getItems().indexOf(newValue.getSaveConfiguration().getSaveServiceId())
+            gameListSaveServiceCombo.getSelectionModel().clearAndSelect(
+                    gameListSaveServiceCombo.getItems().indexOf(newValue.getSaveConfiguration().getSaveServiceId())
             );
             referenceCombo.getSelectionModel().clearAndSelect(
                     referenceCombo.getItems().indexOf(newValue.getSaveConfiguration().getRemoteSaveUuid())
@@ -291,6 +303,10 @@ public class MainController implements Initializable {
     // this naming scheme hurts me
     @FXML
     private void onSaveTabServiceSelected() {
+
+    }
+
+    public void onUploadSave(ActionEvent actionEvent) {
 
     }
     /**
