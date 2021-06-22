@@ -60,6 +60,7 @@ public class App extends Application {
             EventHandlerFactory.registerHandler(new ValidateGameHandler());
             EventHandlerFactory.registerHandler(new ValidateGitRepoHandler());
             EventHandlerFactory.registerHandler(new DeleteSourceHandler());
+            EventHandlerFactory.registerHandler(new TaskHandler());
             launch();
         } catch (IOException e) {
             // should log

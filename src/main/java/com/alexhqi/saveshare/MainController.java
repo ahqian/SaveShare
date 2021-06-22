@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -279,7 +281,7 @@ public class MainController implements Initializable {
     private void onAddSource() {
         if (GitSaveService.SERVICE_ID.equals(sourceServiceCombo.getValue())) {
             // handle add git repo
-            GitRepo repo = getRepoFromInput();
+            GitRepo repo = getRepoFromSourceInput();
             if (repo != null) {
                 fireWorkEvent("Add Source", new ValidateGitRepoEvent(validationResult -> {
                     if (validationResult.isSuccess()) {
@@ -323,10 +325,12 @@ public class MainController implements Initializable {
     private void fireWorkEvent(String taskCode, Event event) {
         eventBus.registerEvent(new AppWorkingEvent(taskCode, AppWorkingEvent.Status.WORKING, mainBox));
         eventBus.registerEvent(event);
+        // though the event is handled asynchronously at this point,
+        // it is expected that the eventBus is handling events to completion sequentially
         eventBus.registerEvent(new AppWorkingEvent(taskCode, AppWorkingEvent.Status.COMPLETE, mainBox));
     }
 
-    private GitRepo getRepoFromInput() {
+    private GitRepo getRepoFromSourceInput() {
         GitRepo repo = new GitRepo();
         try {
             repo.setName(gitSourceNameTextField.getText());
@@ -359,7 +363,29 @@ public class MainController implements Initializable {
     }
 
     public void onUploadSave(ActionEvent actionEvent) {
-
+        GitRepo repo = gitSaveRepoCombo.getValue();
+        if (repo == null) {
+            setErrorText("No Git Repo selected as upload destination.");
+            return;
+        }
+        try {
+            File file = Path.of(gitSaveUploadTextField.getText()).toFile();
+            if (!file.exists()) {
+                setErrorText("The specified upload path does not exist.");
+            }
+            TaskEvent event = new TaskEvent(() -> {
+                GitSaveService service = (GitSaveService)SaveServiceFactory.getService(GitSaveService.SERVICE_ID);
+                Save save = service.uploadSaveFile(file, repo);
+                Platform.runLater(() -> {
+                    saveListView.getItems().add(save);
+                    saveListView.getSelectionModel().select(save);
+                });
+                return null;
+            });
+            fireWorkEvent("UPLOAD_SAVE", event);
+        } catch (InvalidPathException e) {
+            setErrorText("Specified upload path is invalid.");
+        }
     }
     /**
      * END SAVES TAB

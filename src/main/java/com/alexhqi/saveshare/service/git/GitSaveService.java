@@ -286,7 +286,7 @@ public class GitSaveService implements RemoteSaveService {
         return serviceConfiguration.getRepoWithName(save.getRepoName());
     }
 
-    public void uploadSaveFile(File save, GitRepo repo) throws GitAPIException, IOException {
+    public Save uploadSaveFile(File save, GitRepo repo) throws GitAPIException, IOException {
         if (save == null || !save.exists()) {
             throw new IllegalArgumentException("The given File does not exist.");
         }
@@ -313,6 +313,8 @@ public class GitSaveService implements RemoteSaveService {
         pushUpdatedSaveFile(repo, gitSave);
         addSaveToRepoInfo(repo, gitSave);
         initGitRepos();
+
+        return new Save(uuid, GitSaveService.SERVICE_ID);
     }
 
     private void pushUpdatedSaveFile(GitRepo repo, GitSave gitSave) throws GitAPIException {
