@@ -12,6 +12,7 @@ import com.alexhqi.saveshare.event.type.*;
 import com.alexhqi.saveshare.service.RemoteSaveService;
 import com.alexhqi.saveshare.service.SaveServiceFactory;
 import com.alexhqi.saveshare.service.git.GitRepo;
+import com.alexhqi.saveshare.service.git.GitSave;
 import com.alexhqi.saveshare.service.git.GitSaveService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -144,6 +145,7 @@ public class MainController implements Initializable {
         SaveServiceFactory.getServices().forEach(service -> {
             gameListSaveServiceCombo.getItems().add(service.getId());
             sourceServiceCombo.getItems().add(service.getId());
+            savesListSaveServiceCombo.getItems().add(service.getId());
         });
 
         // GAMES LIST INITIALIZATION
@@ -191,9 +193,53 @@ public class MainController implements Initializable {
         });
         GitSaveService gitSaveService = (GitSaveService)SaveServiceFactory.getService(GitSaveService.SERVICE_ID);
         sourceListView.getItems().addAll(gitSaveService.getRepos());
+        gitSaveRepoCombo.getItems().addAll(gitSaveService.getRepos());
+
+        // SAVES LIST
+        saveListView.setCellFactory((param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Save item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.getReference() == null) {
+                    setText(null);
+                } else {
+                    setText(item.getReference().toString());
+                }
+            }
+        }));
+        saveListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        saveListView.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            showSaveInfo(newValue);
+        });
 
         // EVENT HANDLING INITIALIZATION
         eventBus = EventProcessor.getInstance().getBus();
+    }
+
+    private void showSaveInfo(Save save) {
+        if (save != null) {
+            savesReferenceText.setText(save.getReference().toString());
+            if (GitSaveService.SERVICE_ID.equals(save.getServiceId())) {
+                GitSaveService gitSaveService = (GitSaveService) SaveServiceFactory.getService(GitSaveService.SERVICE_ID);
+                GitRepo repo = gitSaveService.getRepoForSaveReference(save.getReference());
+                GitSave gitSave = gitSaveService.getGitSaveWithId(save.getReference());
+                if (repo == null) {
+                    setErrorText("Could not find GitRepo for Save with reference " + save.getReference());
+                    return;
+                }
+                if (gitSave == null) {
+                    setErrorText("Could not find GitSave with reference " + save.getReference());
+                    return;
+                }
+                gitSaveRepoCombo.getSelectionModel().select(repo);
+                gitSaveNameTextField.setText(gitSave.getName());
+            }
+        } else {
+            savesReferenceText.clear();
+            gitSaveRepoCombo.getSelectionModel().select(null);
+            gitSaveNameTextField.clear();
+        }
+        gitSaveUploadTextField.clear();
     }
 
     private void showGitSourceInfo(GitRepo repo) {
@@ -303,7 +349,13 @@ public class MainController implements Initializable {
     // this naming scheme hurts me
     @FXML
     private void onSaveTabServiceSelected() {
-
+        try {
+            RemoteSaveService service = SaveServiceFactory.getService(savesListSaveServiceCombo.getValue());
+            saveListView.getItems().clear();
+            saveListView.getItems().addAll(service.getAllSaves());
+        } catch (IllegalArgumentException e) {
+            setErrorText("Could not find internal Remote Save Service with id: " + savesListSaveServiceCombo.getValue());
+        }
     }
 
     public void onUploadSave(ActionEvent actionEvent) {

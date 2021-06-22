@@ -167,9 +167,8 @@ public class GitSaveService implements RemoteSaveService {
     }
 
     public void removeRepo(String name) throws IOException {
-        Optional<GitRepo> repoOptional = serviceConfiguration.getRepos().stream().filter(repo -> repo.getName().equals(name)).findFirst();
-        if (repoOptional.isPresent()) {
-            GitRepo repo = repoOptional.get();
+        GitRepo repo = serviceConfiguration.getRepoWithName(name);
+        if (repo != null) {
             if (!serviceConfiguration.getRepos().remove(repo)) {
                 throw new RuntimeException("Failed to remove repo from GitSaveService configuration.");
             }
@@ -216,21 +215,22 @@ public class GitSaveService implements RemoteSaveService {
         return getAppDataDirectory().resolve(CONFIG_FILE);
     }
 
-    @Override
-    public File getSaveWithId(UUID remoteSaveUuid) {
+    public GitSave getGitSaveWithId(UUID remoteSaveUuid) {
         Optional<GitSave> optionalSave = serviceConfiguration.getSaves().stream()
                 .filter((gitSave -> gitSave.getUuid().equals(remoteSaveUuid)))
                 .findFirst();
-        if (optionalSave.isPresent()) {
-            GitSave save = optionalSave.get();
-            Optional<GitRepo> optionalRepo = serviceConfiguration.getRepos().stream()
-                    .filter((gitRepo -> gitRepo.getName().equals(save.getRepoName())))
-                    .findFirst();
-            if (optionalRepo.isEmpty()) {
+        return optionalSave.orElse(null);
+    }
+
+    @Override
+    public File getSaveWithId(UUID remoteSaveUuid) {
+        GitSave save = getGitSaveWithId(remoteSaveUuid);
+        if (save != null) {
+            GitRepo repo = serviceConfiguration.getRepoWithName(save.getRepoName());
+            if (repo == null) {
                 LOGGER.warn("Could not find the associated GitRepo for save with id: {}", remoteSaveUuid);
                 return null;
             }
-            GitRepo repo = optionalRepo.get();
             try {
                 pullUpdates(repo);
                 // could be a directory or a single file.
@@ -257,11 +257,8 @@ public class GitSaveService implements RemoteSaveService {
                 .findFirst();
         if (optionalSave.isPresent()) {
             GitSave gitSave = optionalSave.get();
-            Optional<GitRepo> optionalRepo = serviceConfiguration.getRepos().stream()
-                    .filter(repo -> repo.getName().equals(gitSave.getRepoName()))
-                    .findFirst();
-            if (optionalRepo.isPresent()) {
-                GitRepo repo = optionalRepo.get();
+            GitRepo repo = serviceConfiguration.getRepoWithName(gitSave.getRepoName());
+            if (repo != null) {
                 try {
                     pushUpdatedSaveFile(repo, gitSave);
                 } catch (GitAPIException e) {
@@ -282,6 +279,11 @@ public class GitSaveService implements RemoteSaveService {
         return serviceConfiguration.getSaves().stream()
                 .map((gitsave -> new Save(gitsave.getUuid(), SERVICE_ID)))
                 .collect(Collectors.toList());
+    }
+
+    public GitRepo getRepoForSaveReference(UUID reference) {
+        GitSave save = getGitSaveWithId(reference);
+        return serviceConfiguration.getRepoWithName(save.getRepoName());
     }
 
     public void uploadSaveFile(File save, GitRepo repo) throws GitAPIException, IOException {
